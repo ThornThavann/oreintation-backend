@@ -1,0 +1,10 @@
+# dependencies
+node_modules/
+
+# TypeScript build output
+dist/
+*.js
+*.js.map
+
+# Editor files
+.vscode/
