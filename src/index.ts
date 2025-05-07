@@ -3,14 +3,16 @@ const app = express();
 import dotenv from 'dotenv';
 import authRoutes from './routes/authRoute';
 import skillsRoutes from './routes/skillsRoute';
-
+import suveyRoute from './routes/surveyRoute';
+import surveyRoute from './routes/surveyRoute';
 
 
 dotenv.config();
 app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/skill', skillsRoutes);
-
+app.use('/api/survey', suveyRoute);
+app.use('/api', surveyRoute);
 
 
 
