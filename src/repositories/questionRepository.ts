@@ -11,10 +11,11 @@ export class QuestionRepository {
   }
 
   // Fetch question by ID
-  async findById(id: number): Promise<Question | null> {
-    const result = await db.query('SELECT * FROM question WHERE id = $1', [id]);
-    return result.rows[0] || null;
-  }
+ // Find question by ID from database
+ async findById(id: number): Promise<Question | null> {
+  const result = await db.query('SELECT * FROM question WHERE id = $1', [id]);
+  return result.rows[0] || null;
+}
 
   // Create a new question
   async create(questionData: QuestionWithoutId): Promise<Question> {

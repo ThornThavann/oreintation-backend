@@ -1,6 +1,6 @@
-import { Router } from 'express';
+import { NextFunction, Router } from 'express';
 import * as questionController from '../controllers/questionController'; 
-import { authenticateToken } from '../Middleware/authMiddleware';  
+import { authenticateToken, AuthRequest } from '../Middleware/authMiddleware';  
 const router = Router();
 
 

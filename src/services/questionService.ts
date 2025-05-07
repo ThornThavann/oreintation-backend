@@ -3,6 +3,7 @@ import { QuestionRepository } from '../repositories/questionRepository';
 import { Question, QuestionWithoutId } from '../interface/questionInterface';
 
 export class QuestionService {
+  questionRepo: any;
   constructor(private questionRepository: QuestionRepository) {}
 
   // Get all questions
@@ -11,9 +12,10 @@ export class QuestionService {
   }
 
   // Get question by ID
-  async getQuestionById(id: number): Promise<Question | null> {
-    return this.questionRepository.findById(id);
+  async getQuestionById(id: number) {
+    return await this.questionRepository.findById(id);
   }
+
 
   // Create a new question
   async createQuestion(questionData: QuestionWithoutId): Promise<Question> {

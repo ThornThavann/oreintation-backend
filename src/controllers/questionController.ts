@@ -2,6 +2,7 @@
 import { Request, Response } from 'express';
 import { QuestionService } from '../services/questionService';
 import { QuestionRepository } from '../repositories/questionRepository';
+import { AuthRequest } from '../Middleware/authMiddleware';
 
 const questionRepository = new QuestionRepository();
 const questionService = new QuestionService(questionRepository);
@@ -61,23 +62,17 @@ export const getAll = async (req: Request, res: Response): Promise<void> => {
 
 // Get question by ID
 export const getById = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const id = parseInt(req.params.id);
-    const question = await questionService.getQuestionById(id);
+  const id = Number(req.params.id);
+  const question = await questionService.getQuestionById(id);
 
-    if (!question) {
-      res.status(404).json({ message: 'Question not found' });
-      return;
-    }
-
-    res.status(200).json({
-      message: 'Question retrieved',
-      question: question,
-    });
-  } catch (error) {
-    res.status(500).json({ message: (error as Error).message });
+  if (!question) {
+    res.status(404).json({ message: 'Question not found' });
+    return;
   }
+
+  res.json(question);
 };
+
 
 // Remove question
 export const remove = async (req: Request, res: Response): Promise<void> => {
@@ -98,3 +93,4 @@ export const remove = async (req: Request, res: Response): Promise<void> => {
     res.status(500).json({ message: (error as Error).message });
   }
 };
+
