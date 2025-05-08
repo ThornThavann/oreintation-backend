@@ -6,4 +6,5 @@ const router = express.Router();
 
 router.post('/survey', authenticateToken,surveyController.createSurvey);
 router.get('/survey',authenticateToken, surveyController.getSurveys);
+router.get("/stats", surveyController.getSurveyStats);
 export default router;

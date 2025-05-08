@@ -1,4 +1,5 @@
 export interface Survey {
+  skill_id: any;
   grand: any;
   student: {
     full_name: string;
