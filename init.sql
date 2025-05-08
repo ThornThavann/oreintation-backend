@@ -78,11 +78,23 @@ ORDER BY s.id DESC;
 
 
 
+SELECT * FROM surveys
+WHERE EXTRACT(YEAR FROM created_at) = year
+AND student_all;(total)count
 
 
 
-
-
+SELECT 
+  st.full_name AS student_name,  
+  sk.skill_name AS skill_name,
+  COUNT(sq.id) AS total_questions,
+  SUM(sa.rating) AS total_rating
+FROM student st
+JOIN answer sa ON sa.student_id = st.id
+JOIN survey_questions sq ON sq.id = sa.question_id  
+JOIN skills sk ON sk.id = sq.skill_id
+GROUP BY st.id, sk.id
+ORDER BY total_rating DESC;
 
 
 
