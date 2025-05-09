@@ -5,6 +5,7 @@ import authRoutes from './routes/authRoute';
 import skillsRoutes from './routes/skillsRoute';
 import questionRoutes from './routes/questionRoute';
 import surveyRoute from './routes/surveyRoute';
+import studentRoute from './routes/studentRoute';
 
 
 
@@ -15,6 +16,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/skill', skillsRoutes);
 app.use('/api/question', questionRoutes);
 app.use('/api/survey', surveyRoute);
+app.use('/api/student', studentRoute);
+
 
 
 
