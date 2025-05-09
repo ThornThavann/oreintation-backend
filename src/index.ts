@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 import authRoutes from './routes/authRoute';
 import skillsRoutes from './routes/skillsRoute';
 import questionRoutes from './routes/questionRoute';
+import surveyRoute from './routes/surveyRoute';
+
 
 
 
@@ -12,6 +14,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/skill', skillsRoutes);
 app.use('/api/question', questionRoutes);
+app.use('/api/survey', surveyRoute);
 
 
 
