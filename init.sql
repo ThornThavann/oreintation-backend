@@ -99,12 +99,22 @@ ORDER BY total_rating DESC;
 
 
 
+SELECT question_id, COUNT(rating) AS rating_count
+FROM survey_questions
+GROUP BY question_id;
+
+SELECT student_id
+FROM surveys
+GROUP BY student_id;
+
+SELECT skill_id
+FROM question
+GROUP BY skill_id;
 
 
-
-
-
-
+SELECT skill_name
+FROM skills
+GROUP BY skill_name;
 
 
 
