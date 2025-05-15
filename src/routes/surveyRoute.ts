@@ -1,10 +1,9 @@
 import express from 'express';
-import * as surveyController from '../controllers/surveyController';
-import { authenticateToken } from '../Middleware/authMiddleware'; 
+import surveyController from '../controllers/surveyController';
 
 const router = express.Router();
 
-router.post('/survey', authenticateToken,surveyController.createSurvey);
-router.get('/survey',authenticateToken, surveyController.getSurveys);
-router.get("/stats", surveyController.getSurveyStats);
+// POST route should call the createSurvey method of the controller
+router.post('/create', surveyController.createSurvey);
+
 export default router;

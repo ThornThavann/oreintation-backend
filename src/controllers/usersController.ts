@@ -27,7 +27,7 @@ export const createUser = async (req: Request, res: Response) => {
     const { user, token } = await UserService.create(name, email, password);
     res.status(201).json({ message: 'Registration successful', user, token });
   } catch (err) {
-    res.status(500).json({ error: 'Registration failed' });
+    res.status(500).json({ message: 'User have already' });
   }
 };
 

@@ -8,7 +8,7 @@ export const register = async (req: Request, res: Response) => {
     const { user, token } = await registerService(name, email, password);
     res.status(201).json({ message: 'Registration successful', user, token });
   } catch (err) {
-    res.status(500).json({ error: 'Registration failed' });
+    res.status(500).json({ error: 'user already have' });
   }
 };
 
