@@ -1,9 +1,14 @@
 import express from 'express';
-import surveyController from '../controllers/surveyController';
+import * as surveyController from "../controllers/surveyController"
+import { getStudentSkillRatingSummary } from '../controllers/surveyController';
 
 const router = express.Router();
 
-// POST route should call the createSurvey method of the controller
-router.post('/create', surveyController.createSurvey);
+// Helper to wrap async route handlers
+const asyncHandler = (fn: any) => (req: any, res: any, next: any) =>
+  Promise.resolve(fn(req, res, next)).catch(next);
+
+router.post('/surveys', asyncHandler(surveyController.createSurvey));
+router.get('/students/:studentId/skill-rating-summary', asyncHandler(surveyController.getStudentSkillRatingSummary));
 
 export default router;

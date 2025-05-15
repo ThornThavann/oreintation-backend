@@ -1,35 +1,37 @@
+import { SurveyService } from '../interface/surveyInterface';
+import { CreateSurveyInput, Survey } from '../interface/surveyInterface';
+import surveyRepository from '../repositories/surveyRepository';
 
+const surveyService: SurveyService = {
+  async getAllSurveys(): Promise<Survey[]> {
+    return await surveyRepository.findAll();
+  },
 
-import pool from '../config/db'; 
-import * as surveyRepository from '../repositories/surveyRepository';
-const createSurvey = async (
-  student: { full_name: string; gender_id: number; school_id: number; grade: number },
-  questions: any[]
-) => {
-  const client = await pool.connect();
+  async getSurveyById(id: number): Promise<Survey> {
+    const survey = await surveyRepository.findById(id);
+    if (!survey) throw new Error('Survey not found');
+    return survey;
+  },
 
-  try {
-    await client.query('BEGIN');
+  async createSurvey(input: CreateSurveyInput): Promise<{ surveyId: number; studentId: number }> {
+    const survey = await surveyRepository.create();
+    const student = await surveyRepository.insertStudent(input.student, survey.id);
+    await surveyRepository.insertSurveyQuestions(survey.id, input.questions, student.id!);
+    return { surveyId: survey.id, studentId: student.id! };
+  },
 
-    // Insert the survey and get the surveyId
-    const surveyId = await surveyRepository.insertSurvey(client);
-    
-    // Insert the student and get the studentId
-    const studentId = await surveyRepository.insertStudent(student, surveyId, client);
+  async updateSurvey(id: number, data: Partial<Survey>): Promise<Survey | null> {
+    return await surveyRepository.update(id, data);
+  },
 
-    // Insert the questions associated with the survey
-    await surveyRepository.insertSurveyQuestions(surveyId, questions, studentId, client);
+  async deleteSurvey(id: number): Promise<boolean> {
+    return await surveyRepository.delete(id);
+  },
 
-    await client.query('COMMIT');
-
-    return { surveyId, studentId };
-  } catch (error) {
-    await client.query('ROLLBACK');
-    throw error;
-  } finally {
-    client.release();
+  // Just add this method as a normal method of the object
+  async getStudentSkillRatingSummary(studentId: number) {
+    return await surveyRepository.getStudentSkillRatings(studentId);
   }
 };
 
-
-export default createSurvey;
+export default surveyService;

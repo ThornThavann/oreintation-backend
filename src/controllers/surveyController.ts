@@ -1,20 +1,29 @@
-
-import surveyService from '../services/surveyService';
 import { Request, Response } from 'express';
+import surveyService from '../services/surveyService';
 
-class SurveyController {
-  async createSurvey(req: Request, res: Response) {
+export const createSurvey = async (req: Request, res: Response) => {
+  try {
+    const { student, questions } = req.body;
+    const result = await surveyService.createSurvey({ student, questions });
 
-    try {
-      const { student, questions } = req.body;
-      const result = await surveyService(student, questions);
-
-      res.status(201).json({ message: 'Survey created successfully', data: result });
-    } catch (error) {
-      console.error('Error creating survey:', error);
-      res.status(500).json({ message: 'Internal server error' });
-    }
+    res.status(201).json({ message: 'Survey created successfully', data: result });
+  } catch (error) {
+    console.error('Error creating survey:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
-}
+};
 
-export default new SurveyController(); 
+export const getStudentSkillRatingSummary = async (req: Request, res: Response) => {
+  try {
+    const studentId = Number(req.params.studentId);
+    if (isNaN(studentId)) {
+      return res.status(400).json({ message: 'Invalid student ID' });
+    }
+
+    const summary = await surveyService.getStudentSkillRatingSummary(studentId);
+   return  res.status(200).json({ data: summary });
+  } catch (error) {
+    console.error('Error fetching skill rating summary:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
