@@ -53,6 +53,7 @@ export interface SurveyRepository {
 
   // New method for skill rating summary per student
   getStudentSkillRatings(studentId: number): Promise<SkillRatingSummary[]>;
+  getStudentSkills(studentId: number): Promise<SkillRatingSummary[]>;
 }
 
 // Service Interface
@@ -66,4 +67,6 @@ export interface SurveyService {
 
   // New method for service layer
   getStudentSkillRatingSummary(studentId: number): Promise<SkillRatingSummary[]>;
+  getStudentSkill(studentId: number): Promise<SkillRatingSummary[]>;
+
 }

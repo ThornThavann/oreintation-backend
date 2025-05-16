@@ -31,6 +31,9 @@ const surveyService: SurveyService = {
   // Just add this method as a normal method of the object
   async getStudentSkillRatingSummary(studentId: number) {
     return await surveyRepository.getStudentSkillRatings(studentId);
+  },
+  async getStudentSkill(studentId: number) {
+    return await surveyRepository.getStudentSkills(studentId);
   }
 };
 

@@ -16,7 +16,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/skill', skillsRoutes);
 app.use('/api/question', questionRoutes);
 app.use('/api', surveyRoute);
-app.use('/api/user', usersRoute);
+app.use('/api', usersRoute);
 app.use('/api/student', studentRoute);
 
 

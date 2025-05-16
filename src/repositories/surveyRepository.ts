@@ -1,41 +1,46 @@
-import pool from '../config/db';
+import pool from "../config/db";
 import {
   Survey,
   Student,
   StudentWithoutId,
   QuestionResponse,
   SkillRatingSummary,
-} from '../interface/surveyInterface';
-import { SurveyRepository } from '../interface/surveyInterface';
+} from "../interface/surveyInterface";
+import { SurveyRepository } from "../interface/surveyInterface";
 
 const surveyRepository: SurveyRepository = {
   async findAll(): Promise<Survey[]> {
-    const result = await pool.query('SELECT * FROM public.survey');
+    const result = await pool.query("SELECT * FROM public.survey");
     return result.rows;
   },
 
   async findById(id: number): Promise<Survey | null> {
-    const result = await pool.query('SELECT * FROM public.survey WHERE id = $1', [id]);
+    const result = await pool.query(
+      "SELECT * FROM public.survey WHERE id = $1",
+      [id]
+    );
     return result.rows[0] || null;
   },
 
   async create(): Promise<Survey> {
     const result = await pool.query(
-      'INSERT INTO public.survey (create_at) VALUES (CURRENT_TIMESTAMP) RETURNING *'
+      "INSERT INTO public.survey (create_at) VALUES (CURRENT_TIMESTAMP) RETURNING *"
     );
     return result.rows[0];
   },
 
   async update(id: number, data: Partial<Survey>): Promise<Survey | null> {
     const result = await pool.query(
-      'UPDATE public.survey SET create_at = $1 WHERE id = $2 RETURNING *',
+      "UPDATE public.survey SET create_at = $1 WHERE id = $2 RETURNING *",
       [data.created_at, id]
     );
     return result.rows[0] || null;
   },
 
   async delete(id: number): Promise<boolean> {
-    const result = await pool.query('DELETE FROM public.survey WHERE id = $1', [id]);
+    const result = await pool.query("DELETE FROM public.survey WHERE id = $1", [
+      id,
+    ]);
     return result.rowCount !== null && result.rowCount > 0;
   },
 
@@ -45,7 +50,13 @@ const surveyRepository: SurveyRepository = {
         full_name, gender_id, school_id, grade, create_at, survey_id
       ) VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP, $5)
       RETURNING *`,
-      [student.full_name, student.gender_id, student.school_id, student.grade, surveyId]
+      [
+        student.full_name,
+        student.gender_id,
+        student.school_id,
+        student.grade,
+        surveyId,
+      ]
     );
     return result.rows[0];
   },
@@ -53,19 +64,21 @@ const surveyRepository: SurveyRepository = {
   async insertSurveyQuestions(surveyId, questions, studentId): Promise<void> {
     for (const question of questions) {
       const skillResult = await pool.query(
-        'SELECT skill_id FROM public.question WHERE id = $1',
+        "SELECT skill_id FROM public.question WHERE id = $1",
         [question.question_id]
       );
       const skill_id = skillResult.rows[0]?.skill_id;
 
       await pool.query(
-        'INSERT INTO public.survey_question (survey_id, question_id, rating, skill_id, student_id) VALUES ($1, $2, $3, $4, $5)',
+        "INSERT INTO public.survey_question (survey_id, question_id, rating, skill_id, student_id) VALUES ($1, $2, $3, $4, $5)",
         [surveyId, question.question_id, question.rating, skill_id, studentId]
       );
     }
   },
   // Removed duplicate and incomplete function declaration
-  async getStudentSkillRatings(studentId: number): Promise<SkillRatingSummary[]> {
+  async getStudentSkillRatings(
+    studentId: number
+  ): Promise<SkillRatingSummary[]> {
     const result = await pool.query(
       `
      SELECT 
@@ -86,9 +99,48 @@ ORDER BY total_rating DESC;
     );
 
     return result.rows;
-  }
+  },
+
+  async getStudentSkills(
+    studentId: number
+  ): Promise<SkillRatingSummary[]> {
+    const result = await pool.query(
+      `
+SELECT 
+  s.full_name AS student_name,
+  g.gender,
+  sc.school_name,
+  s.grade,
+  s.created_at AS student_date,
+  sk.skill_name,
+  SUM(sq.rating) AS total_rating
+FROM 
+  survey_question sq
+JOIN 
+  student s ON sq.student_id = s.id
+JOIN 
+  gender g ON s.gender_id = g.id
+JOIN 
+  school sc ON s.school_id = sc.id
+JOIN 
+  question q ON sq.question_id = q.id
+JOIN 
+  skills sk ON q.skill_id = sk.id
+WHERE 
+  s.id = $1
+GROUP BY 
+  s.full_name, g.gender, sc.school_name, s.grade, s.created_at, sk.skill_name
+ORDER BY 
+  total_rating DESC;
+
+
+
+      `,
+      [studentId]
+    );
+
+    return result.rows;
+  },
 };
-
-
 
 export default surveyRepository;

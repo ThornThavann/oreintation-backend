@@ -9,7 +9,7 @@ const router = Router();
 router.get('/all',authenticateToken, skillsController.getAll);               // Get all skills
 router.get('/:id', authenticateToken, skillsController.getById);          // Get skill by ID
 router.post('/new', authenticateToken, skillsController.create);   // Create a new skill
-router.put('/update/:id', authenticateToken, skillsController.update); // Update skill by ID
-router.delete('/remove/:id', authenticateToken, skillsController.remove);
+router.put('/:id', authenticateToken, skillsController.update); // Update skill by ID
+router.delete('/:id', authenticateToken, skillsController.remove);
 
 export default router;
