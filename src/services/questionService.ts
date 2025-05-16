@@ -1,8 +1,8 @@
 // src/services/questionService.ts
 import { QuestionRepository } from '../repositories/questionRepository';
-import { Question, QuestionWithoutId } from '../interface/questionInterface';
+import { IQuestionService, Question, QuestionWithoutId } from '../interface/questionInterface';
 
-export class QuestionService {
+export class QuestionService implements IQuestionService {
   questionRepo: any;
   constructor(private questionRepository: QuestionRepository) {}
 

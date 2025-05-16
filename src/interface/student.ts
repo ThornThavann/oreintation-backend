@@ -5,3 +5,4 @@ export interface Student {
     school_id: number;
     age: number;
 }
+

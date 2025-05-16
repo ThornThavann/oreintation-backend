@@ -1,7 +1,7 @@
 import db from '../config/db';
-import { Question, QuestionWithoutId } from '../interface/questionInterface';
+import { IQuestionRepository, Question, QuestionWithoutId } from '../interface/questionInterface';
 
-export class QuestionRepository {
+export class QuestionRepository implements IQuestionRepository {
 
 
   // Fetch all question

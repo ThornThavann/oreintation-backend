@@ -6,7 +6,7 @@ export interface Question {
 
 export type QuestionWithoutId = Omit<Question, 'id'>;
 
-export interface QuestionRepository{
+export interface IQuestionRepository{
   findAll(): Promise<Question[]>;
   findById(id: number): Promise<Question | null>;
   create(questionData: QuestionWithoutId): Promise<Question>;
@@ -14,7 +14,7 @@ export interface QuestionRepository{
   delete(id: number): Promise<boolean>;
 }
 
-export interface QuestionService {
+export interface IQuestionService {
   getAllQuestions(): Promise<Question[]>;
   getQuestionById(id: number): Promise<Question | null>;
   createQuestion(questionData: QuestionWithoutId): Promise<Question>;
