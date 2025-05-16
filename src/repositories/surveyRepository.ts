@@ -64,38 +64,36 @@ const surveyRepository: SurveyRepository = {
       );
     }
   },
-  getStudentSkillRatings: function (studentId: number): Promise<SkillRatingSummary[]> {
-    throw new Error('Function not implemented.');
+  // Removed duplicate and incomplete function declaration
+  async getStudentSkillRatings(studentId: number): Promise<SkillRatingSummary[]> {
+    const result = await pool.query(
+      `
+      SELECT 
+        s.full_name AS student_name,
+        sk.skill_name,
+        SUM(sq.rating) AS total_rating
+      FROM 
+        survey_question sq
+      JOIN 
+        student s ON sq.student_id = s.id
+      JOIN 
+        question q ON sq.question_id = q.id
+      JOIN 
+        skills sk ON q.skill_id = sk.id
+      WHERE 
+        s.id = $1
+      GROUP BY 
+        s.full_name, sk.skill_name
+      ORDER BY 
+        total_rating DESC
+      `,
+      [studentId]
+    );
+
+    return result.rows;
   }
 };
 
-export const getStudentSkillRatings = async (studentId: number) => {
-  const result = await pool.query(
-    `
-    SELECT 
-      s.full_name AS student_name,
-      sk.skill_name,
-      SUM(sq.rating) AS total_rating
-    FROM 
-      survey_question sq
-    JOIN 
-      student s ON sq.student_id = s.id
-    JOIN 
-      question q ON sq.question_id = q.id
-    JOIN 
-      skill sk ON q.skill_id = sk.id
-    WHERE 
-      s.id = $1
-    GROUP BY 
-      s.full_name, sk.skill_name
-    ORDER BY 
-      total_rating DESC
-    `,
-    [studentId]
-  );
-
-  return result.rows;
-};
 
 
 export default surveyRepository;
