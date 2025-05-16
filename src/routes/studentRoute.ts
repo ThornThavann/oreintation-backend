@@ -1,9 +1,10 @@
-
 import { Router } from 'express';
-import * as studentController from '../controllers/studentController'; 
+import { getMostPopularSkillByYear, getSchool, getStudentsByYear } from '../controllers/studentController';
 
 const router = Router();
 
-router.get('/:id', studentController.getschool);          
+router.get('/school-count', getSchool);
+router.get('/year-count', getStudentsByYear);
+router.get('/skill/most-popular-by-year', getMostPopularSkillByYear);
 
 export default router;
