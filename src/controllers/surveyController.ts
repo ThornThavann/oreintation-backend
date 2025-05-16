@@ -1,37 +1,29 @@
 import { Request, Response } from 'express';
-import * as surveyService from '../services/surveyService';
-import { fetchSurveyStats } from "../services/surveyService";
+import surveyService from '../services/surveyService';
 
 export const createSurvey = async (req: Request, res: Response) => {
   try {
-    const survey = await surveyService.createSurvey(req.body);
-    res.status(201).json(survey);
+    const { student, questions } = req.body;
+    const result = await surveyService.createSurvey({ student, questions });
+
+    res.status(201).json({ message: 'Survey created successfully', data: result });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to create survey' });
+    console.error('Error creating survey:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
 
-export const getSurveys = async (_req: Request, res: Response) => {
+export const getStudentSkillRatingSummary = async (req: Request, res: Response) => {
   try {
-    const surveys = await surveyService.getSurveys();
-    res.status(200).json(surveys);
+    const studentId = Number(req.params.studentId);
+    if (isNaN(studentId)) {
+      return res.status(400).json({ message: 'Invalid student ID' });
+    }
+
+    const summary = await surveyService.getStudentSkillRatingSummary(studentId);
+   return  res.status(200).json({ message: 'Skill rating summary fetched successfully', data: summary   });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch surveys' });
+    console.error('Error fetching skill rating summary:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
-export function createSurveyController(arg0: string, createSurveyController: any) {
-    throw new Error('Function not implemented.');
-}
-
-
-
-export const getSurveyStats = async (req: Request, res: Response) => {
-  try {
-    const data = await fetchSurveyStats();
-    res.status(200).json(data);
-  } catch (error) {
-    console.error("Error in getSurveyStats:", error); // Add this
-    res.status(500).json({ message: "Error fetching survey stats" });
-  }
-};
-

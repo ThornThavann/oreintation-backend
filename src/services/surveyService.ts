@@ -1,104 +1,37 @@
-import * as repository from '../repositories/surveyRepository';
-import { Survey } from '../interface/surveyInterface';
-import { getSurveyCountByYear } from "../repositories/surveyRepository";
+import { SurveyService } from '../interface/surveyInterface';
+import { CreateSurveyInput, Survey } from '../interface/surveyInterface';
+import surveyRepository from '../repositories/surveyRepository';
 
-export const createSurvey = async (body: Survey) => {
-  try {
-    // Insert the student and get the student_id
-    const student_id = await repository.insertStudent(
-      body.student.full_name,
-      body.gender_id,
-      body.school_id,
-      body.age
-    );
+const surveyService: SurveyService = {
+  async getAllSurveys(): Promise<Survey[]> {
+    return await surveyRepository.findAll();
+  },
 
-    // Insert the survey with student_id and get the survey_id
-    const survey_id = await repository.insertSurvey(student_id);
+  async getSurveyById(id: number): Promise<Survey> {
+    const survey = await surveyRepository.findById(id);
+    if (!survey) throw new Error('Survey not found');
+    return survey;
+  },
 
-    // Insert each survey question and link to the survey
-    for (const question of body.questions) {
-      await repository.insertSurveyQuestion(survey_id, question.question_id, question.rating);
-    }
+  async createSurvey(input: CreateSurveyInput): Promise<{ surveyId: number; studentId: number }> {
+    const survey = await surveyRepository.create();
+    const student = await surveyRepository.insertStudent(input.student, survey.id);
+    await surveyRepository.insertSurveyQuestions(survey.id, input.questions, student.id!);
+    return { surveyId: survey.id, studentId: student.id! };
+  },
 
-    // Get the student details (optional - to include in the response)
-    const studentDetails = {
-      full_name: body.student.full_name,
-      age: body.age,
-      gender_id: body.gender_id,
-      school_id: body.school_id,
-      grand: body.grand, // Assuming this value exists in the body
-      questions: body.questions,
-      skill_id: body.skill_id, // Ensure this value exists in the request body
-    };
+  async updateSurvey(id: number, data: Partial<Survey>): Promise<Survey | null> {
+    return await surveyRepository.update(id, data);
+  },
 
-    // Return the response in the desired format
-    return {
-      message: 'Survey created',
-      survey: {
-        id: survey_id,
-        student: studentDetails,  // Include the student data (with skill_id) in the response
-      },
-    };
-  } catch (error) {
-    console.error('Error creating survey:', error);
-    throw new Error('Failed to create survey');
+  async deleteSurvey(id: number): Promise<boolean> {
+    return await surveyRepository.delete(id);
+  },
+
+  // Just add this method as a normal method of the object
+  async getStudentSkillRatingSummary(studentId: number) {
+    return await surveyRepository.getStudentSkillRatings(studentId);
   }
 };
 
-
-
-
-
-
-
-// export const createSurvey = async (body: Survey) => {
-//   try {
-//     // Insert the student and get the student_id
-//     const student_id = await repository.insertStudent(
-//       body.student.full_name,
-//       body.gender_id,
-//       body.school_id,
-//       body.age
-//     );
-
-//     // Insert the survey with student_id and get the survey_id
-//     const survey_id = await repository.insertSurvey(student_id);
-
-//     // Insert each survey question and link to the survey
-//     for (const question of body.questions) {
-//       await repository.insertSurveyQuestion(survey_id, question.question_id, question.rating);
-//     }
-
-//     // Get the student details (optional - to include in the response)
-//     const studentDetails = {
-//       full_name: body.student.full_name,
-//       age: body.age,
-//       gender_id: body.gender_id,
-//       school_id: body.school_id,
-//       grand: body.grand, // Assuming this value exists in the body
-//       questions: body.questions,
-//     };
-
-//     // Return the response in the desired format
-//     return {
-//       message: 'Survey created',
-//       survey: {
-//         id: survey_id,
-//         student: studentDetails,  // Include the student data in the response
-//       },
-//     };
-//   } catch (error) {
-//     console.error('Error creating survey:', error);
-//     throw new Error('Failed to create survey');
-//   }
-// };
-
-export const getSurveys = async () => {
-  return await repository.getAllSurveys();
-};
-
-
-
-export const fetchSurveyStats = async () => {
-  return await getSurveyCountByYear();
-};
+export default surveyService;
