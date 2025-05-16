@@ -1,6 +1,5 @@
 import express from 'express';
 import * as surveyController from "../controllers/surveyController"
-import { getStudentSkillRatingSummary } from '../controllers/surveyController';
 import { authenticateToken } from '../Middleware/authMiddleware';
 const router = express.Router();
 
@@ -10,5 +9,6 @@ const asyncHandler = (fn: any) => (req: any, res: any, next: any) =>
 
 router.post('/surveys',authenticateToken, asyncHandler(surveyController.createSurvey));
 router.get('/students/:studentId/skill-rating-summary',authenticateToken, asyncHandler(surveyController.getStudentSkillRatingSummary));
+router.get('/students/:studentId/skill',authenticateToken, asyncHandler(surveyController.getStudentSkill));
 
 export default router;
