@@ -68,24 +68,19 @@ const surveyRepository: SurveyRepository = {
   async getStudentSkillRatings(studentId: number): Promise<SkillRatingSummary[]> {
     const result = await pool.query(
       `
-      SELECT 
-        s.full_name AS student_name,
-        sk.skill_name,
-        SUM(sq.rating) AS total_rating
-      FROM 
-        survey_question sq
-      JOIN 
-        student s ON sq.student_id = s.id
-      JOIN 
-        question q ON sq.question_id = q.id
-      JOIN 
-        skills sk ON q.skill_id = sk.id
-      WHERE 
-        s.id = $1
-      GROUP BY 
-        s.full_name, sk.skill_name
-      ORDER BY 
-        total_rating DESC
+     SELECT 
+  s.full_name AS student_name,
+  s.created_at AS student_date,
+  sk.skill_name,
+  SUM(sq.rating) AS total_rating
+FROM survey_question sq
+JOIN student s ON sq.student_id = s.id
+JOIN question q ON sq.question_id = q.id
+JOIN skills sk ON q.skill_id = sk.id
+WHERE s.id = $1
+GROUP BY s.full_name, s.created_at, sk.skill_name
+ORDER BY total_rating DESC;
+
       `,
       [studentId]
     );
